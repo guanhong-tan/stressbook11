@@ -14,6 +14,7 @@ session = boto3.Session(
 )
 dynamodb = session.resource('dynamodb')
 
+dynamodb_client = session.client('dynamodb')
 # Define table names
 USERS_TABLE = 'users'
 EVENTS_TABLE = 'events'

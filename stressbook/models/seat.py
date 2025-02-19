@@ -153,7 +153,7 @@ def get_seat_availability(event_id):
             ExpressionAttributeValues={':eid': event_id}
         )
         seats = response.get('Items', [])
-        print(f"Retrieved seats for event {event_id}: {seats}")  # Debug print
+        # print(f"Retrieved seats for event {event_id}: {seats}")  # Debug print
         return seats
     except ClientError as e:
         print(f"Error getting seat availability: {e}")

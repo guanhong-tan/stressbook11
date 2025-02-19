@@ -143,12 +143,13 @@
                                     <div class="align-items-end">
 
                                         <p class="text-nowrap p-2 mb-0 mt-2 pt-0 text-end" style="font-size:12px;">
-                                            {{ booking.seat_details[0].tickets_booked }} Tickets
+                                            <!-- Note haven't test yet -->
+                                            {{ booking.seat_details.tickets_booked }} Tickets
                                         </p>
-                                        <p class="text-nowrap mb-0 text-end" style="font-size:12px;">Section: {{ booking.seat_details[0].section }} </p>
+                                        <p class="text-nowrap mb-0 text-end" style="font-size:12px;">Section: {{ booking.seat_details.section }} </p>
                                         <p class="text-nowrap mb-0 mt-2 pop_semi_bold"
                                             style="font-size:14px;color:#936E48;">
-                                            Total: ${{ booking.total_price }}0
+                                            Total: ${{ booking.total_price }}.00
                                         </p>
                                     </div>
                                 </div>

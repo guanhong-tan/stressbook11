@@ -1,34 +1,37 @@
 from datetime import datetime
-from db_connection import dynamodb, BOOKINGS_TABLE, EVENTS_TABLE
+from db_connection import dynamodb, dynamodb_client, BOOKINGS_TABLE, EVENTS_TABLE , SEATS_TABLE
 from botocore.exceptions import ClientError
 import uuid
 
 # Instead, just get the table reference
 bookings_table = dynamodb.Table(BOOKINGS_TABLE)
 events_table = dynamodb.Table(EVENTS_TABLE)
+seats_table = dynamodb.Table(SEATS_TABLE)
 
 def create_booking(user_id, event_id, section, quantity, price_per_ticket, event_name, event_location):
     """Create a new booking using DynamoDB transactions"""
     try:
         booking_id = str(uuid.uuid4())
         booking = {
-            'booking_id': booking_id,
-            'user_id': user_id,
-            'event_id': event_id,
-            'status': 'completed',
-            'timestamp': datetime.now().isoformat(),
-            'total_price': price_per_ticket * quantity,
+            'booking_id': {'S': booking_id},  # ✅ Convert to DynamoDB format
+            'user_id': {'S': user_id},
+            'event_id': {'S': event_id},
+            'status': {'S': 'completed'},
+            'timestamp': {'S': datetime.now().isoformat()},
+            'total_price': {'N': str(price_per_ticket * quantity)},  # ✅ Convert number to string
             'seat_details': {
-                'section': section,
-                'quantity': quantity,
-                'price_per_ticket': price_per_ticket
+                'M': {  # ✅ Nested dict should be converted to "M"
+                    'section': {'S': section},
+                    'quantity': {'N': str(quantity)},
+                    'price_per_ticket': {'N': str(price_per_ticket)}
+                }
             },
-            'event_name': event_name,
-            'event_location': event_location
+            'event_name': {'S': event_name},
+            'event_location': {'S': event_location}
         }
 
         # Use DynamoDB transactions
-        response = dynamodb.transact_write_items(
+        response = dynamodb_client.transact_write_items(
             TransactItems=[
                 {
                     'Put': {
@@ -40,15 +43,24 @@ def create_booking(user_id, event_id, section, quantity, price_per_ticket, event
                 {
                     'Update': {
                         'TableName': events_table.name,
-                        'Key': {'event_id': event_id},
+                        'Key': { 'event_id': {'S': event_id} },
                         'UpdateExpression': 'SET available_tickets = available_tickets - :qty, sold_tickets = sold_tickets + :qty',
                         'ConditionExpression': 'available_tickets >= :qty',
-                        'ExpressionAttributeValues': {':qty': quantity}
+                        'ExpressionAttributeValues': { ':qty': {'N': str(quantity)} }
                     }
+                },
+                {
+                    'Update': {
+                        'TableName':  seats_table.name,   
+                        'Key': { 'seat_id': {'S': f'seat_section_{event_id}_{section}'} }, 
+                        'UpdateExpression': 'SET available_tickets = available_tickets - :qty, sold_tickets = sold_tickets + :qty',
+                        'ConditionExpression': 'available_tickets >= :qty',
+                        'ExpressionAttributeValues': { ':qty': {'N': str(quantity)} }
+                    }  
                 }
             ]
         )
-        return {"success": True, "booking_id": booking_id}
+        return {"success": True, "event_id": event_id , "section:" : section , "Amount Of Tickets:": quantity}
     except ClientError as e:
         if e.response['Error']['Code'] == 'TransactionCanceledException':
             return {"error": "Not enough tickets available"}

@@ -206,7 +206,8 @@ def reset_events():
                 'description': event['description'],
                 'synopsis': event['synopsis']
             }
-            events_table.put_item(Item=event_data)
+            response = events_table.put_item(Item=event_data)
+            print(f"Inserted: {event_data['event_id']} -> {response}")
         
         return True
     except ClientError as e:

@@ -200,14 +200,13 @@ def reset_database():
 def booking_concert_seat(event_id):
     print(f"Accessing booking page for event: {event_id}")  # Debug print
     event = event_model.get_event_by_id(event_id)
-    print(f"Event data: {event}")  # Debug print
     
     if not event:
         print(f"Event {event_id} not found")  # Debug print
         abort(404)
     
     seats = seat.get_seat_availability(event_id)
-    print(f"Seats retrieved: {seats}")  # Debug print
+    # print(f"Seats retrieved: {seats}")  # Debug print
     
     return render_template('booking_concert_seat.html', event=event, seats=seats)
 

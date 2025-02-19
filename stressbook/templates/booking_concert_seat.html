@@ -204,7 +204,7 @@
         }
     
         // Redirect to booking confirmation page with parameters
-        window.location.href = `/booking/confirm?event_id={{ event._id }}&section=${sectionId}&section_type=${sectionType}&price=${price}`
+        window.location.href = `/booking/confirm?event_id={{ event.event_id }}&section=${sectionId}&section_type=${sectionType}&price=${price}`
       })
     
       // ... rest of the code ...

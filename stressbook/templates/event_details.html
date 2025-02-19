@@ -28,7 +28,7 @@
                 </nav>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 d-flex justify-content-center align-items-center">
-                <a href="{{ url_for('booking_concert_seat', event_id=event._id) }}" class="btn btn-primary btn-block" style="width:100%;padding: 15px 10px;margin: 0;">Buy Tickets</a>
+                <a href="{{ url_for('booking_concert_seat', event_id=event.event_id) }}" class="btn btn-primary btn-block" style="width:100%;padding: 15px 10px;margin: 0;">Buy Tickets</a>
             </div>
         </div>
 
@@ -273,7 +273,7 @@
     }
 
     // Get event ID from a hidden element or directly from the context
-    const eventId = "{{ event._id }}";
+    const eventId = "{{ event.event_id }}";
 
     // Call the function every 2 seconds
     setInterval(() => updateAvailableTickets(eventId), 2000);
