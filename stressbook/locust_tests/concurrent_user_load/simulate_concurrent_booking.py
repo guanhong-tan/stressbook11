@@ -32,7 +32,7 @@ SEAT_SECTIONS = [
     {"section": "pb1", "price": 450}, {"section": "134", "price": 500}, {"section": "108", "price": 450}
 ]
 class ConcertBookingUser(HttpUser):
-    host = "http://127.0.0.1:5000"  # Replace 5000 with your Flask application's port
+    host = "http://3.219.95.171"  # Replace 5000 with your Flask application's port
     wait_time = between(1, 2)  # Simulates user think time between tasks
 
     def on_start(self):
@@ -42,7 +42,7 @@ class ConcertBookingUser(HttpUser):
 
     def login(self):
         """Log in the user."""
-        user_id = random.randint(1, 10000)
+        user_id = random.randint(1, 3000)
         email = f"user_{user_id:05}@example.com"
         response = self.client.post("/login", data={"email": email, "password": "123123"})
         if response.status_code == 200:
